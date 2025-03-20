@@ -1,98 +1,92 @@
-**Template README.md**\
-This file is from the [template repository](https://github.com/crimson206/template/blob/main/README.md).
-Rewrite it for your own package.
+# Crimson Langgraph Reflection
 
-## Python Package Setup
+A modular implementation of LangChain's [Reflexion](https://langchain-ai.github.io/langgraph/tutorials/reflexion/reflexion/) example, designed to make agent development more accessible, extensible, and reusable.
 
-### Setup Base
+## Overview
 
-To install required pip modules for `generate_toml.py`, run
-``` bash
-source scripts/setup_base.sh
+This project transforms the original LangChain Reflexion tutorial into a fully modular package. The Reflexion pattern enables LLM agents to:
+
+1. Answer questions
+2. Reflect on and critique their own answers 
+3. Generate search queries to gather more information
+4. Revise answers based on new information
+
+By modularizing this pattern, this package aims to:
+- Make Reflexion-style agents easier to implement in your projects
+- Provide a solid foundation for further customization and extension
+- Encourage reusability of core Reflexion components
+
+## Installation
+
+```bash
+pip install crimson-langgraph-reflection
 ```
 
-### User Setup
+## Key Components
 
-- go to `generate_toml.py` file, and complete the setup in the `User Setup` session.
+The package is organized into several main modules:
+
+- **graph.py**: Defines the LangGraph state machine that orchestrates the reflection process
+- **responder/**: Contains components for generating answers, reflections, and search queries
+  - **base.py**: Core classes for response generation and validation
+  - **prebuilt.py**: Ready-to-use responder implementations
+- **tool.py**: Search tool integration for information gathering
+- **ui.py**: Simple interface for running the Reflexion agent
+- **llm.py**: LLM configuration (defaulting to Claude 3.5 Sonnet)
+
+## Quick Start
 
 ```python
-options = Options(
-    # Will you use the discussion session in your repo?
-    discussion=False
+from crimson.langchain_reflexion.ui import stream_shortcut
+
+# Run with default settings (5 iterations)
+stream_shortcut(question="What is LangChain?")
+
+# Or customize the number of iterations
+stream_shortcut(
+    question="What is LangChain?",
+    max_iterations=3
 )
 
-# Define the general information of your package
-kwargs = Kwargs(
-    name_space="None",
-    module_name="None",
-    description="None",
+# Use a custom LLM
+from langchain_anthropic import ChatAnthropic
+custom_llm = ChatAnthropic(model="claude-3-opus-20240229")
+
+stream_shortcut(
+    question="What is LangChain?",
+    llm=custom_llm
 )
 ```
 
-If you wrote all the information, run
-```
-python generate_toml.py
-```
+## Examples
 
-#### Template
+For complete examples, check out:
+- [Example Notebook](https://github.com/crimson206/langgraph-reflection/blob/main/example/reflexion_ui.ipynb)
 
-If you want to understand the generation process, check the `template` variable in `generate_toml.py`.
+## Extension and Customization
 
-### Setup Env
+This package is designed to be extensible. You can:
 
-#### Prerequisite
+1. Create custom responder implementations by extending the base classes
+2. Modify the graph structure to add additional steps
+3. Integrate different search or reasoning tools
+4. Adjust the system prompts and reflection criteria
 
-Finish [User Setup](#user-setup) first.
-Of course, conda command must be available.
+## Requirements
 
-#### Setup Env
+- Python ≥ 3.9
+- LangChain
+- LangGraph
+- Anthropic API access (for default LLM)
 
-Run
-``` bash
-source scripts/setup_env.sh
-```
+## License
 
-steps
-- create an conda environment named as your $MODULE_NAME
-- activate the environment.
-- install requirements.txt
+MIT
 
-#### Generate Private Env
-Generate a private repository in this repo.
-I recommend you to write all the unstructured codes in this repo.
+## Contributing
 
-``` bash
-source scripts/generate_dev_repo.sh
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-It will ask you the name of your repo, and then, generate a repo named f'{your_repo_name}-dev'.
+## Acknowledgements
 
-**Usage Tip**
-
-If you wrote your codes in a wrong branch,
-- backup the files to the dev repo
-- remove changes in your main(not main branch) repo
-- move to your correct branch
-- place back the backup codes
-
-
-## Workflows
-
-I currently setup test and release workflows.
-
-**Test**
-
-If you make a PR with the patterns [ main, develop, 'release/*', 'feature/*' ],
-
-It will perform your unittest in ["3.9", "3.10", "3.11"]
-
-**Release**
-
-required secret : PYPI_API_TOKEN
-
-I usually make PRs only when I start release branches.
-release workflow is not conducted automatically. If you think your branch is ready to be published, 
-
-- go to https://github.com/{github_id}/{repo_name}/actions/workflows/release.yaml
-- find the button, 'Run workflow'
-- select the branch to publish. In my case, release/x.x.x
+This project is based on LangChain's Reflexion tutorial. Special thanks to the LangChain team for their innovative work on LLM agent frameworks.
